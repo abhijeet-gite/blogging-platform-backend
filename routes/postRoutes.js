@@ -6,7 +6,8 @@ import {
   getAllPosts,
   getPostById,
   updatePost,
-  deletePost
+  deletePost,
+  getUserPosts, // ✅ Added this
 } from "../controllers/postController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -17,6 +18,9 @@ router.post("/create", authMiddleware, createPost);
 
 // ✅ Get All Posts
 router.get("/", getAllPosts);
+
+// ✅ Get User's Posts (Dashboard)
+router.get("/user/:userId", authMiddleware, getUserPosts); // ✅ Added this
 
 // ✅ Get Single Post
 router.get("/:id", getPostById);

@@ -15,7 +15,6 @@ export const createPost = async (req, res) => {
       title,
       content,
       author: req.user.id, // from authMiddleware
-      status: "pending" // waiting for admin approval
     });
 
     await newPost.save();
@@ -26,23 +25,37 @@ export const createPost = async (req, res) => {
   }
 };
 
-// ✅ Get All Posts
+// ✅ Get All Posts (Public)
 export const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 });
+    const posts = await Post.find()
+      .populate("author", "username email") // ✅ Show username & email
+      .sort({ createdAt: -1 });
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-// ✅ Get Single Post
+// ✅ Get Single Post by ID
 export const getPostById = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id).populate("author", "username email");
     if (!post) return res.status(404).json({ message: "Post not found" });
     res.status(200).json(post);
   } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// ✅ Get User's Posts (For Dashboard)
+export const getUserPosts = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const posts = await Post.find({ author: userId }).sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Get User Posts Error:", error);
     res.status(500).json({ message: "Server Error" });
   }
 };
