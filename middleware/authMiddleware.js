@@ -13,7 +13,13 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // decoded.userId, decoded.email etc.
+
+    // ✅ Ensure id and email only (avoid passing full token payload blindly)
+    req.user = {
+      id: decoded.id,
+      email: decoded.email
+    };
+
     next();
   } catch (err) {
     return res.status(403).json({ message: "Invalid token" });

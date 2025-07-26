@@ -1,59 +1,63 @@
 //server//controllers//blogController.js
 
-const Blog = require("../models/Blog");
+import Blog from "../models/Blog.js";
 
-// Create blog
-exports.createBlog = async (req, res) => {
-  const { title, content, image, tags } = req.body;
+// ✅ Create Blog
+export const createBlog = async (req, res) => {
   try {
-    const blog = await Blog.create({
+    const { title, content, image, tags } = req.body;
+
+    if (!title || !content) {
+      return res.status(400).json({ message: "Title and Content are required" });
+    }
+
+    const newBlog = await Blog.create({
       title,
       content,
       image,
       tags,
-      author: req.user
+      author: req.user.id
     });
-    res.status(201).json(blog);
-  } catch (err) {
+
+    res.status(201).json(newBlog);
+  } catch (error) {
     res.status(500).json({ message: "Error creating blog" });
   }
 };
 
-// Get all blogs by user
-exports.getUserBlogs = async (req, res) => {
+// ✅ Get Blogs for Logged-in User
+export const getUserBlogs = async (req, res) => {
   try {
-    const blogs = await Blog.find({ author: req.user });
+    const blogs = await Blog.find({ author: req.user.id }).sort({ createdAt: -1 });
     res.status(200).json(blogs);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: "Error fetching blogs" });
   }
 };
 
-// Update blog
-exports.updateBlog = async (req, res) => {
-  const { id } = req.params;
-  const { title, content, image, tags } = req.body;
+// ✅ Update Blog
+export const updateBlog = async (req, res) => {
   try {
     const blog = await Blog.findOneAndUpdate(
-      { _id: id, author: req.user },
-      { title, content, image, tags },
+      { _id: req.params.id, author: req.user.id },
+      req.body,
       { new: true }
     );
     if (!blog) return res.status(404).json({ message: "Blog not found" });
     res.status(200).json(blog);
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: "Error updating blog" });
   }
 };
 
-// Delete blog
-exports.deleteBlog = async (req, res) => {
-  const { id } = req.params;
+// ✅ Delete Blog
+export const deleteBlog = async (req, res) => {
   try {
-    const blog = await Blog.findOneAndDelete({ _id: id, author: req.user });
+    const blog = await Blog.findOneAndDelete({ _id: req.params.id, author: req.user.id });
     if (!blog) return res.status(404).json({ message: "Blog not found" });
     res.status(200).json({ message: "Blog deleted successfully" });
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({ message: "Error deleting blog" });
   }
 };
+
