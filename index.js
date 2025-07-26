@@ -36,10 +36,15 @@ app.get('/', (req, res) => {
   res.send('Blogging Platform API is running...');
 });
 
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
+});
+
+
 // Server start
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`✅ Server running on port ${PORT}`);
 });
 
 
