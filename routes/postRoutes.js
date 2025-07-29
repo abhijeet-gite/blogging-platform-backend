@@ -7,9 +7,8 @@ import {
   getPostById,
   updatePost,
   deletePost,
-  getUserPosts
+  getUserPosts, // ✅ Added this
 } from "../controllers/postController.js";
-
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -21,7 +20,7 @@ router.post("/create", authMiddleware, createPost);
 router.get("/", getAllPosts);
 
 // ✅ Get User's Posts (Dashboard)
-router.get("/user", authMiddleware, getUserPosts);  // ✅ User dashboard uses this
+router.get("/user/:userId", authMiddleware, getUserPosts); // ✅ Added this
 
 // ✅ Get Single Post
 router.get("/:id", getPostById);
@@ -33,3 +32,5 @@ router.put("/:id", authMiddleware, updatePost);
 router.delete("/:id", authMiddleware, deletePost);
 
 export default router;
+
+

@@ -8,6 +8,7 @@ import {
   deleteBlog
 } from "../controllers/blogController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import Blog from "../models/Blog.js"; // ✅ IMPORT MISSING FIXED
 
 const router = express.Router();
 
@@ -34,4 +35,6 @@ router.put("/edit/:id", authMiddleware, updateBlog);
 router.delete("/delete/:id", authMiddleware, deleteBlog);
 
 export default router;
+
+
 
